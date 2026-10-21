@@ -78,6 +78,7 @@ Investigates the effect of scaling dataset volume ($N=150 \to 300 \to 500$) usin
 All models were evaluated on the independent $20\%$ test split ($N=30$) partitioned via the SPXY algorithm:
 
 ### **A. Protein Content Prediction (%)**
+
 | Model Architecture | Preprocessing / Input Bands | Train Fit $R_c^2$ | RMSEC (%) | Test Split $R_p^2$ | RMSEP (%) | RPD (Robustness) | Performance Grade |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
 | **SNV + PLSR** | SNV (Full Spectrum, LVs=15) | **0.9919** | **0.2302** | **0.9903** | **0.2524** | **10.14** | 🏆 **Gold Standard (Top Overall)** |
@@ -90,6 +91,7 @@ All models were evaluated on the independent $20\%$ test split ($N=30$) partitio
 | **SNV + SVR** | SNV (RBF Kernel Support Vector) | 0.2787 | 2.1742 | 0.2664 | 2.1921 | 1.17 | Sub-optimal for wide spectra |
 
 ### **B. Moisture Content Prediction (%)**
+
 | Model Architecture | Preprocessing / Input Bands | Train Fit $R_c^2$ | RMSEC (%) | Test Split $R_p^2$ | RMSEP (%) | RPD (Robustness) | Performance Grade |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
 | **1st + PLSR** | 1st-Deriv (Full Spectrum, LVs=15) | **0.9874** | **0.2879** | **0.9824** | **0.2811** | **7.55** | 🏆 **Best Chemometric Model** |
@@ -101,11 +103,12 @@ All models were evaluated on the independent $20\%$ test split ($N=30$) partitio
 | **1st + LSTM** | 1st-Deriv (Recurrent Only) | 0.0000 | 2.5622 | -0.0694 | 2.1945 | 0.97 | Fails to converge without CNN |
 
 ### **C. Sample Size Scaling Analysis (N = 150 vs 300 vs 500)**
-| Total Samples ($N$) | Train Split Data ($80\%$) | Test Split Data ($20\%$) | PLSR $R_p^2$ | PLSR RMSEP (%) | PLSR RPD | 1D-CNN $R_p^2$ | 1D-CNN RMSEP (%) | 1D-CNN RPD | Operational Interpretation |
-| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :--- |
-| **$N = 150$** | 120 | 30 | **0.9903** | **0.2524%** | **10.14** | **0.9203** | **0.7225%** | **3.54** | **Certified Laboratory Ground Truth** (Pristine signal-to-noise) |
-| **$N = 300$** | 240 | 60 | 0.8311 | 0.9692% | 2.43 | 0.8235 | 0.9906% | 2.38 | **Industrial Robustness** (Simulated thermal & baseline drift) |
-| **$N = 500$** | 400 | 100 | 0.7866 | 1.0406% | 2.16 | 0.7176 | 1.1970% | 1.88 | **Noise Attenuation Boundary** (High operational variance) |
+
+| Total Samples (N) | Train Split Data (80%) | Test Split Data (20%) | PLSR Rp² | PLSR RMSEP (%) | PLSR RPD | 1D-CNN Rp² | 1D-CNN RMSEP (%) | 1D-CNN RPD | Operational Interpretation |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :--- |
+| **N = 150** | 120 | 30 | **0.9903** | **0.2524%** | **10.14** | **0.9203** | **0.7225%** | **3.54** | **Certified Laboratory Ground Truth** (Pristine signal-to-noise) |
+| **N = 300** | 240 | 60 | 0.8311 | 0.9692% | 2.43 | 0.8235 | 0.9906% | 2.38 | **Industrial Robustness** (Simulated thermal & baseline drift) |
+| **N = 500** | 400 | 100 | 0.7866 | 1.0406% | 2.16 | 0.7176 | 1.1970% | 1.88 | **Noise Attenuation Boundary** (High operational variance) |
 
 ---
 
@@ -124,91 +127,3 @@ All high-resolution distribution maps are located in the [`outputs/`](outputs/) 
 
 ## 📂 5. Repository Structure
 
-```
-HyperGrain-AI/
-├── data/
-│   ├── sensAIfood_Perten/          # Certified NIR chemical dataset (CSV, 150 samples)
-│   └── corn.mat                    # Benchmark spectral reference cube
-├── outputs/                        # High-resolution (300 DPI) figures & CSV benchmarks
-│   ├── project_block_diagram.png   # Full system architecture diagram
-│   ├── spectral_curves_comparison.png
-│   ├── feature_wavelengths_selection.png
-│   ├── scatter_protein_plsr.png
-│   ├── scatter_moisture_plsr.png
-│   ├── models_comparison_protein.png
-│   ├── models_comparison_moisture.png
-│   ├── sample_seed_protein_heatmap.png
-│   ├── sample_seed_moisture_heatmap.png
-│   ├── cultivar_protein_comparison.png
-│   ├── cultivar_moisture_comparison.png
-│   ├── benchmark_results.csv
-│   └── sample_size_comparison.csv
-├── src/
-│   ├── data_loader.py              # Ingestion, SPXY 80/20 partitioning, and augmentation
-│   ├── preprocessing.py            # SNV, MSC, Savitzky-Golay 1st-derivative, and SG smoothing
-│   ├── feature_selection.py        # SPA (Successive Projections) and CARS algorithms
-│   ├── models.py                   # PLSR, MLR, SVR, 1D-CNN, LSTM, and CLNet implementations
-│   ├── evaluate.py                 # Academic metrics (R2, RMSE, RPD) and visualization scripts
-│   └── spatial_mapping.py          # Otsu 800nm segmentation & pixel-by-pixel chemical projection
-├── app.py                          # Lightweight HTTP server & API backend
-├── index.html                      # Interactive web dashboard & real-time chemical simulator
-├── main.py                         # Master execution pipeline
-├── run_dashboard.bat               # Windows 1-click dashboard launcher
-├── run_pipeline.bat                # Windows 1-click training pipeline launcher
-├── .gitignore                      # Git exclusion rules
-└── README.md                       # Complete research documentation
-```
-
----
-
-## 🚀 6. Installation & Quickstart
-
-### Prerequisites
-* Python 3.10 or 3.11
-* Windows, macOS, or Linux
-
-### 1. Clone the Repository
-```bash
-git clone https://github.com/Mihir-7257/HyperGrain-AI.git
-cd HyperGrain-AI
-```
-
-### 2. Create Virtual Environment & Install Dependencies
-```bash
-# Using standard venv
-python -m venv .venv
-source .venv/bin/activate    # On Windows: .venv\Scripts\activate
-
-# Install required packages
-pip install torch scikit-learn scipy numpy pandas matplotlib seaborn opencv-python
-```
-
-### 3. Launch the Interactive Web Dashboard
-```bash
-python app.py
-```
-Open your web browser and navigate to:
-👉 **`http://localhost:8501`**
-
-*(On Windows, you can alternatively double-click [`run_dashboard.bat`](run_dashboard.bat)).*
-
-### 4. Re-run Full Training & Evaluation Pipeline
-To re-train all models from scratch and regenerate all publication figures:
-```bash
-python main.py
-```
-*(On Windows, you can alternatively double-click [`run_pipeline.bat`](run_pipeline.bat)).*
-
----
-
-## 📚 7. Academic References
-
-1. **Xuan, G., Jia, H., Shao, Y., & Shi, C. (2024).** *Protein content prediction of rice grains based on hyperspectral imaging.* Spectrochimica Acta Part A: Molecular and Biomolecular Spectroscopy, 320, 124589.
-2. **Hu, X., Dai, M., Li, A., Liang, Y., Lu, W., Zeng, J., Peng, J., Tian, J., & Chen, M. (2025).** *CLNet: A fusion network capturing spectral features and wavelength relationships for predicting sorghum protein and moisture content.* Journal of Food Composition and Analysis, 142, 107412.
-3. **Zhang, W. (2026).** *WheatDual-4V: Hyperspectral data of wheat seeds.* Mendeley Data, V1, doi: 10.17632/j7jm7rbwxh.1.
-4. **Lagerholm, M. (2024).** *sensAIfood cereal NIR data (wheat, corn, barley) - Perten set.* Zenodo, doi: 10.5281/zenodo.15838136.
-
----
-
-## 📄 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
