@@ -1,0 +1,31 @@
+# Python virtual environment
+.venv/
+env/
+venv/
+ENV/
+
+# Python cache & compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# OS metadata
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE & Editor settings
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Large binary datasets (Mendeley 3D cubes - 1 GB)
+# Keeping CSV chemical reference and sample files
+data/Hyperspectral data of wheat seeds/
+
+# Logs & temp files
+*.log
+scratch/
